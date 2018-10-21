@@ -11,6 +11,7 @@
 #define LOW 1
 #define HIGHT 2
 
+int merge(int *piValue,int iStartNum,int iMidNum,int iEndNum);
 int print_ai(int *piValue,int iNum)
 {
 	int i = 0;
@@ -67,14 +68,66 @@ int select_min_sort(int *piValue,int iNum)
 	return 0;
 }
 
+int merge(int *piValue,int iStartNum,int iMidNum,int iEndNum)
+{
+	if(iStartNum +1 >= iEndNum)
+	{
+		int temp = 0;
+		if(piValue[iStartNum]<piValue[iEndNum])
+			return 0;
+		temp=piValue[iStartNum];
+		piValue[iStartNum]=piValue[iEndNum];
+		piValue[iEndNum]=temp;
+		return 0;
+	}
+	int *iLeftValue = NULL;
+	int *iRightValue = NULL;
+	int i = 0,iLeftNum = 0,iRightNum = 0;
+	iLeftValue = (int *)malloc(sizeof(int)*(iMidNum-iStartNum+1));
+	iRightValue = (int *)malloc(sizeof(int)*(iEndNum-iMidNum));
+	merge(piValue,iStartNum,iStartNum+(iMidNum-iStartNum)/2,iMidNum);
+	merge(piValue,iMidNum+1,iMidNum+1+(iEndNum-iMidNum)/2,iEndNum);	
+	for(i = 0;i<(iMidNum-iStartNum+1);i++)
+	{	
+		iLeftValue[i] = piValue[iStartNum+i];
+	}
+	for(i = 0; i<(iEndNum-iMidNum);i++)
+	{
+		iRightValue[i] = piValue[iMidNum+i+1];
+	}
+	for(i = iStartNum;i<iEndNum+1;i++)
+	{
+
+		if(iLeftValue != NULL && iLeftNum<(iMidNum-iStartNum)+1 && (iLeftValue[iLeftNum]<iRightValue[iRightNum] || iRightNum>=(iEndNum-iMidNum)))
+		{
+			piValue[i]=iLeftValue[iLeftNum];
+			iLeftNum++;
+		}else if(iRightValue != NULL && iRightNum < (iEndNum-iMidNum) && (iLeftValue[iLeftNum]>=iRightValue[iRightNum] || iLeftNum >=(iMidNum-iStartNum+1)))
+		{
+			piValue[i]=iRightValue[iRightNum];
+			iRightNum++;
+		}
+	}
+	if(iLeftValue!= NULL)
+		free(iLeftValue);
+	if(iRightValue!=NULL)
+		free(iRightValue);
+	return 0;
+}
+int merge_sort(int *piValue,int iNum)
+{
+	printf("sort by merge sort\n");
+	merge(piValue,0,(iNum-1)/2,iNum-1);
+	return 0;
+}
 int main(){
 	int aiValue[]={
 		3,2,5,7,2,4,1
 	};
 	print_ai(aiValue,7);
 	//insert_sort(aiValue,7);
-	select_min_sort(aiValue,7);
+	//select_min_sort(aiValue,7);
+	merge_sort(aiValue,7);
 	print_ai(aiValue,7);
 	return 0;
 }
-
